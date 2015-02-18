@@ -28,6 +28,9 @@ var animals = [
     "whale"
 ];
 
+//Enable this to train the data set for "CAT"
+var shouldTrain = true;
+
 $(document).ready(function () {
 
     // Only works on Chrome
@@ -171,10 +174,21 @@ $(document).ready(function () {
     function animalRequested(text) {
         console.log("Looking for animal in : " + text);
 
-        text = text.toLowerCase();
+        var animal = text.toLowerCase();
 
-        if (contains(animals, text)) {
-            playAnimalSound(text);
+
+        //Training the Cat Set
+        if (shouldTrain) {
+            var trainer = new Trainer({
+                animal: 'cat',
+                set: ["okay", "can't", "dad", "yeah"]
+            });
+            trainer.train();
+            animal = trainer.fetchAnimal(text);
+        }
+
+        if (contains(animals, animal.toLowerCase())) {
+            playAnimalSound(animal);
         } else {
             console.log("Not an animal.");
         }
