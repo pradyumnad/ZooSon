@@ -17,27 +17,27 @@
 'use strict';
 
 var app = require('express')(),
-  server = require('http').Server(app),
-  io = require('socket.io')(server),
-  bluemix = require('./config/bluemix'),
-  SpeechToText = require('./speech-to-text'),
-  extend = require('util')._extend;
+    server = require('http').Server(app),
+    io = require('socket.io')(server),
+    bluemix = require('./config/bluemix'),
+    SpeechToText = require('./speech-to-text'),
+    extend = require('util')._extend;
 
 // if bluemix credentials exists, then override local
 var credentials = extend({
-  url: 'https://stream.watsonplatform.net/speech-to-text-beta/api',
-  username: 'c4c9f894-5701-44dd-a745-0125a146275c',
-  password: 'pk9A6uINLk1Q'
+    url: 'https://stream.watsonplatform.net/speech-to-text-beta/api',
+    username: 'c4c9f894-5701-44dd-a745-0125a146275c',
+    password: 'pk9A6uINLk1Q'
 }, bluemix.getServiceCreds('speech_to_text')); // VCAP_SERVICES
 
 // Save bluemix credentials
-app.set('service',credentials);
+app.set('service', credentials);
 
 // Create the service wrapper
 var speechToText = new SpeechToText(credentials);
 
 // Configure express
-require('./config/express')(app,speechToText);
+require('./config/express')(app, speechToText);
 
 // Configure sockets
 require('./config/socket')(io, speechToText);
