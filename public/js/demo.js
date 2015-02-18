@@ -29,7 +29,7 @@ var animals = [
 ];
 
 //Enable this to train the data set for "CAT"
-var shouldTrain = true;
+var shouldTrain = false;
 
 $(document).ready(function () {
 
@@ -37,6 +37,16 @@ $(document).ready(function () {
     if (!$('body').hasClass('chrome')) {
         $('.unsupported-overlay').show();
     }
+
+    //Training
+    var shouldTrainCheckBox = $("#should-train");
+    shouldTrain = shouldTrainCheckBox.prop('checked');
+    shouldTrainCheckBox.on('click', function(event) {
+        shouldTrain = $(this).prop('checked');
+    });
+
+    console.log("Should Train ?");
+    console.log(shouldTrain);
 
     // UI
     var micButton = $('.micButton'),

@@ -25,6 +25,11 @@ block row-content
                 | adjust your audio input device or settings. If the response seems slow,
                 | it could be a network issue. If you're still having trouble,
                 | please use the sample files instead.
+            form.form-inline
+                div.form-group
+                    p.label.label-info Train the data
+                div.form-group
+                    input.form-control(id='should-train', type='checkbox', value='Train the System (At present only for Cat)')
             div.well
                 div.form-group.row.loading.text-center(style='display:none')
                     img(src='images/watson.gif')
