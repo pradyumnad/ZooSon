@@ -1,0 +1,11 @@
+applications:
+- name: ClassApp
+  command: node app.js
+  path: .
+  memory: 256m
+  services:
+  - Speech To Text-rg
+  declared-services:
+    Speech To Text-rg:
+      label: speech_to_text
+      plan: free
