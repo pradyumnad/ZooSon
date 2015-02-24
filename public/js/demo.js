@@ -41,7 +41,7 @@ $(document).ready(function () {
     //Training
     var shouldTrainCheckBox = $("#should-train");
     shouldTrain = shouldTrainCheckBox.prop('checked');
-    shouldTrainCheckBox.on('click', function(event) {
+    shouldTrainCheckBox.on('click', function (event) {
         shouldTrain = $(this).prop('checked');
     });
 
@@ -247,4 +247,24 @@ $(document).ready(function () {
             error: _error
         });
     }
+
+    /**
+     * NLP Process
+     */
+
+    $('#text-form').submit(function (event) {
+        event.preventDefault();
+
+        var sentence = $("#paragraph").val();
+        console.log(sentence);
+
+        $.post("/tokenize",
+            {
+                sentence: sentence
+            },
+            function (data) {
+                console.log(data);
+            }
+        );
+    });
 });

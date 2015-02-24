@@ -17,43 +17,63 @@
 'use strict';
 
 // Module dependencies
-var express    = require('express'),
-  errorhandler = require('errorhandler'),
-  bodyParser   = require('body-parser'),
-  fs           = require('fs');
+var express = require('express'),
+    errorhandler = require('errorhandler'),
+    bodyParser = require('body-parser'),
+    fs = require('fs');
 module.exports = function (app, speechToText) {
 
-  // Configure Express
-  app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(bodyParser.json());
+    // Configure Express
+    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(bodyParser.json());
 
-  // Setup static public directory
-  app.use(express.static(__dirname + '/../public'));
-  app.set('view engine', 'jade');
-  app.set('views', __dirname + '/../views');
+    // Setup static public directory
+    app.use(express.static(__dirname + '/../public'));
+    app.set('view engine', 'jade');
+    app.set('views', __dirname + '/../views');
 
-  // Add error handling in dev
-  if (!process.env.VCAP_SERVICES) {
-    app.use(errorhandler());
-  }
+    // Add error handling in dev
+    if (!process.env.VCAP_SERVICES) {
+        app.use(errorhandler());
+    }
 
 // render index page
-app.get('/', function(req, res) {
-  res.render('index');
-});
+    app.get('/', function (req, res) {
+        res.render('index');
+    });
 
-app.post('/', function(req, res) {
-  if (!req.body.url || req.body.url.indexOf('audio/') !==0)
-    return res.status(500).json({ error: 'Malformed URL' });
+    /**
+     * OpenNLP Usage
+     */
+    var openNLP = require("opennlp");
 
-  var audio = fs.createReadStream(__dirname + '/../public/' + req.body.url);
+    app.post('/tokenize', function(req, res) {
+        var sentence = req.body.sentence;
+        console.log(sentence);
 
-  speechToText.recognize({audio: audio}, function(err, transcript){
-    if (err)
-      return res.status(500).json({ error: err });
-    else
-      return res.json(transcript);
-  });
-});
+//        var tokenizer = new openNLP().tokenizer;
+//        tokenizer.tokenize(req.body.sentense, function (err, results) {
+//            res.json(results);
+//        });
+
+        var posTagger = new openNLP().posTagger;
+        posTagger.tag(sentence, function(err, results) {
+            res.json(results)
+        });
+    });
+
+    app.post('/', function (req, res) {
+        if (!req.body.url || req.body.url.indexOf('audio/') !== 0)
+            return res.status(500).json({ error: 'Malformed URL' });
+
+        var audio = fs.createReadStream(__dirname + '/../public/' + req.body.url);
+
+        speechToText.recognize({audio: audio}, function (err, transcript) {
+            if (err)
+                return res.status(500).json({ error: err });
+            else
+                return res.json(transcript);
+        });
+    });
 
 };

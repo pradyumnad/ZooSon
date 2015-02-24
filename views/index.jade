@@ -35,6 +35,14 @@ block row-content
                     img(src='images/watson.gif')
                 div.errorMsg
                 div#text
+    div.row.row-centered
+        div.col.col-lg-12.col-md-12
+            h2 Just ask about an Animal
+            form.form-inline(id='text-form')
+                div.form-group
+                    input.form-control(id='paragraph', placeholder='Ask ZooSon')
+                div.form-group
+                    input.form-control.btn.btn-default(value='Go', type='submit')
     div.row
         div.help-block.text-center
             small This application only works in recent versions of Chrome supporting HTML5 audio capture
