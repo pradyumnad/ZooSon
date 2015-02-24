@@ -58,7 +58,11 @@ module.exports = function (app, speechToText) {
 
         var posTagger = new openNLP().posTagger;
         posTagger.tag(sentence, function(err, results) {
-            res.json(results)
+            if (err) {
+                res.json(err);
+            } else {
+                res.json(results);
+            }
         });
     });
 
@@ -75,5 +79,4 @@ module.exports = function (app, speechToText) {
                 return res.json(transcript);
         });
     });
-
 };

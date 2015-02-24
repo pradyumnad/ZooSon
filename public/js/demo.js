@@ -258,13 +258,65 @@ $(document).ready(function () {
         var sentence = $("#paragraph").val();
         console.log(sentence);
 
+//        fetchImages(sentence);
+
+        var words = sentence.split(" ");
+
+        var index = -999;
+
         $.post("/tokenize",
             {
                 sentence: sentence
             },
             function (data) {
                 console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i] == "NN" || data[i] == "NNS") {
+                        index = i;
+                        break;
+                    }
+                }
+
+                if (index < 0) {
+                    alert("No animal found in your sentence");
+                } else {
+                    var animal = words[index];
+                    fetchImages(animal);
+                }
             }
-        );
+        ).fail(function (data) {
+                console.log(data);
+            });
     });
+
+    /**
+     * Instagram API implementation
+     */
+
+    function fetchImages(animal) {
+        var clientId = "6a62994b36e5427fa91890f03a403d5f";
+        var accessToken = "4043872.1fb234f.d87ed5cbe9dc471b80fc8692c734e258";
+
+        var url = "https://api.instagram.com/v1/tags/" + animal + "/media/recent?access_token=" + accessToken;
+
+        $.ajax({
+            url: url,
+            dataType: 'jsonp',
+            type: 'GET',
+            data: {client_id: clientId},
+            success: function (data) {
+                console.log(data);
+                var galleryList = $('#gallery-div');
+                galleryList.empty();
+                for (var x in data.data) {
+                    var tags = data.data[x].tags.toString();
+                    galleryList.append('<div class="col col-md-3 media"><img class="img-thumbnail media-object" src="' + data.data[x].images.low_resolution.url + '"><p class="small media-body">' + tags + '</p></div>');
+                }
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
+
 });
