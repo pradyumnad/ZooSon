@@ -264,12 +264,15 @@ $(document).ready(function () {
 
         var index = -999;
 
-        $.post("/tokenize",
-            {
-                sentence: sentence
-            },
-            function (data) {
-                console.log(data);
+        var service_url = "https://nlpservices.mybluemix.net/api/service/pos/";
+
+        var url = service_url+encodeURIComponent(sentence);
+        console.log(url);
+
+        $.get(url,
+            function (result) {
+                console.log(result);
+                var data = result.results;
                 for (var i = 0; i < data.length; i++) {
                     if (data[i] == "NN" || data[i] == "NNS") {
                         index = i;

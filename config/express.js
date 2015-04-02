@@ -45,26 +45,27 @@ module.exports = function (app, speechToText) {
     /**
      * OpenNLP Usage
      */
-    var openNLP = require("opennlp");
+//    var openNLP = require("opennlp");
 
-    app.post('/tokenize', function(req, res) {
-        var sentence = req.body.sentence;
-        console.log(sentence);
+//    app.post('/tokenize', function(req, res) {
+//        var sentence = req.body.sentence;
+//        console.log(sentence);
 
 //        var tokenizer = new openNLP().tokenizer;
 //        tokenizer.tokenize(req.body.sentense, function (err, results) {
 //            res.json(results);
 //        });
 
-        var posTagger = new openNLP().posTagger;
-        posTagger.tag(sentence, function(err, results) {
-            if (err) {
-                res.json(err);
-            } else {
-                res.json(results);
-            }
-        });
-    });
+//        var posTagger = new openNLP().posTagger;
+//        posTagger.tag(sentence, function(err, results) {
+//            if (err) {
+//                res.json(err);
+//            } else {
+//                console.log(results);
+//                res.json(results);
+//            }
+//        });
+//    });
 
     app.post('/', function (req, res) {
         if (!req.body.url || req.body.url.indexOf('audio/') !== 0)
