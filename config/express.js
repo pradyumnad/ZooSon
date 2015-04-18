@@ -20,12 +20,21 @@
 var express = require('express'),
     errorhandler = require('errorhandler'),
     bodyParser = require('body-parser'),
+    multer = require('multer'),
     fs = require('fs');
+
 module.exports = function (app, speechToText) {
 
     // Configure Express
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
+    app.use(multer({
+        limits: { fileSize: 10000000}, // 1MB
+        dest: './uploads/',
+        rename: function (fieldname, filename) {
+            return filename;
+        }
+    }));
 
     // Setup static public directory
     app.use(express.static(__dirname + '/../public'));
@@ -37,47 +46,18 @@ module.exports = function (app, speechToText) {
         app.use(errorhandler());
     }
 
-// render index page
-    app.get('/', function (req, res) {
-        res.render('index');
-    });
 
-    /**
-     * OpenNLP Usage
-     */
-//    var openNLP = require("opennlp");
-
-//    app.post('/tokenize', function(req, res) {
-//        var sentence = req.body.sentence;
-//        console.log(sentence);
-
-//        var tokenizer = new openNLP().tokenizer;
-//        tokenizer.tokenize(req.body.sentense, function (err, results) {
-//            res.json(results);
-//        });
-
-//        var posTagger = new openNLP().posTagger;
-//        posTagger.tag(sentence, function(err, results) {
-//            if (err) {
-//                res.json(err);
-//            } else {
-//                console.log(results);
-//                res.json(results);
-//            }
+//    app.post('/', function (req, res) {
+//        if (!req.body.url || req.body.url.indexOf('audio/') !== 0)
+//            return res.status(500).json({ error: 'Malformed URL' });
+//
+//        var audio = fs.createReadStream(__dirname + '/../public/' + req.body.url);
+//
+//        speechToText.recognize({audio: audio}, function (err, transcript) {
+//            if (err)
+//                return res.status(500).json({ error: err });
+//            else
+//                return res.json(transcript);
 //        });
 //    });
-
-    app.post('/', function (req, res) {
-        if (!req.body.url || req.body.url.indexOf('audio/') !== 0)
-            return res.status(500).json({ error: 'Malformed URL' });
-
-        var audio = fs.createReadStream(__dirname + '/../public/' + req.body.url);
-
-        speechToText.recognize({audio: audio}, function (err, transcript) {
-            if (err)
-                return res.status(500).json({ error: err });
-            else
-                return res.json(transcript);
-        });
-    });
 };

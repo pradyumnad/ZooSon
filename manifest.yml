@@ -1,16 +1,16 @@
 applications:
-- name: ZooSon1234
+- name: ZooSon
   command: node app.js
   path: .
   memory: 256m
   services:
-  - Speech To Text-rt
-  - Visual Recognition-rt
+  - Speech To Text-rg
+  - Visual Recognition-rg
   declared-services:
-    Speech To Text-rt:
+    Speech To Text-rg:
       label: speech_to_text
       plan: free   
-    Visual Recognition-rt:
+    Visual Recognition-rg:
       label: visual_recognition
       plan: free
  

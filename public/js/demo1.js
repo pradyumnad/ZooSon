@@ -133,14 +133,13 @@
 
     // Grab all form data
     $.ajax({
-      url: '/visual',
+      url: '/',
       type: 'POST',
       data: $('form').serialize(),
       success: showResult,
       error: _error
     });
   }
-
   $('#fileupload').submit(function (e) {
     e.preventDefault();
     return false;

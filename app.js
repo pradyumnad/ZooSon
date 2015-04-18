@@ -21,13 +21,18 @@ var app = require('express')(),
     io = require('socket.io')(server),
     bluemix = require('./config/bluemix'),
     SpeechToText = require('./speech-to-text'),
+    request = require('request'),
+    path = require('path'),
+    validator = require('validator'),
+    watson = require('watson-developer-cloud'),
+    fs = require('fs'),
     extend = require('util')._extend;
 
 // if bluemix credentials exists, then override local
 var credentials = extend({
-    "url": "https://stream.watsonplatform.net/speech-to-text-beta/api",
-    "username": "c4c9f894-5701-44dd-a745-0125a146275c",
-    "password": "pk9A6uINLk1Q"
+    url: "https://stream.watsonplatform.net/speech-to-text-beta/api",
+    username: "c4c9f894-5701-44dd-a745-0125a146275c",
+    password: "pk9A6uINLk1Q"
 }, bluemix.getServiceCreds('speech_to_text')); // VCAP_SERVICES
 
 // Save bluemix credentials
@@ -42,28 +47,15 @@ require('./config/express')(app, speechToText);
 // Configure sockets
 require('./config/socket')(io, speechToText);
 
-
-//Visual Recognization added by Guru
-
-var express = require('express'),
-  app = express(),
-  request = require('request'),
-  path = require('path'),
-  bluemix = require('./config/bluemix'),
-  validator = require('validator'),
-  watson = require('watson-developer-cloud'),
-  extend = require('util')._extend,
-  fs = require('fs');
-
 // Bootstrap application settings
 require('./config/express')(app);
 
 // if bluemix credentials exists, then override local
 var credentials1 = extend({
    version: 'v1',
-   "url": "https://gateway.watsonplatform.net/visual-recognition-beta/api",
-   "username": "d8f479f9-4fd7-4684-a19b-e92080d38e56",
-   "password": "7O0XDxb2SSzm"
+   url: "https://gateway.watsonplatform.net/visual-recognition-beta/api",
+   username: "d8f479f9-4fd7-4684-a19b-e92080d38e56",
+   password: "7O0XDxb2SSzm"
 }, bluemix.getServiceCreds('visual_recognition')); // VCAP_SERVICES
 
 // Create the service wrapper
@@ -74,7 +66,7 @@ app.get('/', function(req, res) {
   res.render('index');
 });
 
-app.post('/visual', function (req, res) {
+app.post('/', function (req, res) {
     // Classifiers are 0 = all or a json = {label_groups:['<classifier-name>']}
     var classifier = req.body.classifier || '0';  // All
     if (classifier !== '0') {
@@ -102,16 +94,13 @@ app.post('/visual', function (req, res) {
         image_file: imgFile
     };
 
-    visualRecognition.recognize(formData, function (error, result) {
-        console.log(error);
-        console.log(result);
-
+    visualRecognition.recognize(formData, function(error, result) {
         if (error)
             return res.status(error.error ? error.error.code || 500 : 500).json({ error: error });
         else
             return res.json(result);
     });
-}); 
+});
 //*/
 /*Ended visual recognization */
 
