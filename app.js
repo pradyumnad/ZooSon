@@ -68,7 +68,7 @@ app.get('/', function(req, res) {
 
 app.post('/', function (req, res) {
     // Classifiers are 0 = all or a json = {label_groups:['<classifier-name>']}
-    var classifier = req.body.classifier || '0';  // All
+    var classifier =  'Animal';  // Only Animals
     if (classifier !== '0') {
         classifier = JSON.stringify({ label_groups: [classifier] });
     }
@@ -80,7 +80,7 @@ app.post('/', function (req, res) {
         imgFile = fs.createReadStream(req.files.image.path);
     } else if (req.body.url && validator.isURL(req.body.url)) {
         // web image
-        imgFile = request(req.body.url.split('?')[0]);
+        imgFile = request(req.body.url[0].split('?')[0]);
     } else if (req.body.url && req.body.url.indexOf('images') === 0) {
         // local image
         imgFile = fs.createReadStream(path.join('public', req.body.url));

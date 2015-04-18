@@ -45,19 +45,4 @@ module.exports = function (app, speechToText) {
     if (!process.env.VCAP_SERVICES) {
         app.use(errorhandler());
     }
-
-
-//    app.post('/', function (req, res) {
-//        if (!req.body.url || req.body.url.indexOf('audio/') !== 0)
-//            return res.status(500).json({ error: 'Malformed URL' });
-//
-//        var audio = fs.createReadStream(__dirname + '/../public/' + req.body.url);
-//
-//        speechToText.recognize({audio: audio}, function (err, transcript) {
-//            if (err)
-//                return res.status(500).json({ error: err });
-//            else
-//                return res.json(transcript);
-//        });
-//    });
 };

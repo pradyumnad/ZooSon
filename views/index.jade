@@ -45,29 +45,12 @@ block row-content
 
         div.col-lg-6.col-md-12.col-xs-12
             h2 Visual Recognization
-            div.form-group
-                input.form-control.btn.btn-success(value='Go',id="visible", type='submit',style="width:40px")
-
             div.row
                 div
                     h2 &nbsp;
                         div.form-group.row
                             form.upload-form#fileupload(method='POST', enctype='multipart/form-data', action='/')
                                 fieldset
-                                    div.form-group.row
-                                        div.col-lg-12.col-md-12.col-xs-12
-                                            label.control-label(for='classifier') Select a classifier:
-                                            select(name='classifier')#classifier.form-control
-                                                option(value='0', selected=classifier=='0') All (Default)
-                                                option(value='Animal', selected=classifier=='Animal') Animal
-                                                option(value='Food', selected=classifier=='Food') Food
-                                                option(value='Landmark', selected=classifier=='Landmark') Landmark
-                                                option(value='Object', selected=classifier=='Object') Object
-                                                option(value='Human', selected=classifier=='Human') Human
-                                                option(value='Scene', selected=classifier=='Scene') Scene
-                                                option(value='Sports', selected=classifier=='Sports') Sports
-                                                option(value='Vehicle', selected=classifier=='Vehicle') Vehicle
-                                    hr
                                     div.form-group.row
                                         div.col-lg-12.col-md-12.col-xs-12.text-center.dropzone
                                             label.btn(for='file') Click or drop a JPG in this box.

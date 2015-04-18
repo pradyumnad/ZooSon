@@ -226,3 +226,31 @@ input[type="file"]:focus + .browse {
     /* inline-block space fix */
     margin-right:-4px;
 }
+
+.result {
+    display: none;
+}
+.loading {
+    display: none;
+}
+.loading img {
+    display: block;
+    margin: 0px auto;
+}
+
+.message {
+    display: none;
+}
+.message h4 {
+    color: #00b2ef;
+    font-weight: 400;
+}
+.error h4 {
+    color: #FF5050;
+}
+
+@media screen and (max-width: 991px) {
+    .image-options .well:before {
+        left: 50%;
+    }
+}
