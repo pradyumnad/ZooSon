@@ -25,9 +25,9 @@ var app = require('express')(),
 
 // if bluemix credentials exists, then override local
 var credentials = extend({
-    url: 'https://stream.watsonplatform.net/speech-to-text-beta/api',
-    username: 'c4c9f894-5701-44dd-a745-0125a146275c',
-    password: 'pk9A6uINLk1Q'
+    "url": "https://stream.watsonplatform.net/speech-to-text-beta/api",
+    "username": "c4c9f894-5701-44dd-a745-0125a146275c",
+    "password": "pk9A6uINLk1Q"
 }, bluemix.getServiceCreds('speech_to_text')); // VCAP_SERVICES
 
 // Save bluemix credentials
@@ -41,6 +41,79 @@ require('./config/express')(app, speechToText);
 
 // Configure sockets
 require('./config/socket')(io, speechToText);
+
+
+//Visual Recognization added by Guru
+
+var express = require('express'),
+  app = express(),
+  request = require('request'),
+  path = require('path'),
+  bluemix = require('./config/bluemix'),
+  validator = require('validator'),
+  watson = require('watson-developer-cloud'),
+  extend = require('util')._extend,
+  fs = require('fs');
+
+// Bootstrap application settings
+require('./config/express')(app);
+
+// if bluemix credentials exists, then override local
+var credentials1 = extend({
+   version: 'v1',
+   "url": "https://gateway.watsonplatform.net/visual-recognition-beta/api",
+   "username": "d8f479f9-4fd7-4684-a19b-e92080d38e56",
+   "password": "7O0XDxb2SSzm"
+}, bluemix.getServiceCreds('visual_recognition')); // VCAP_SERVICES
+
+// Create the service wrapper
+var visualRecognition = watson.visual_recognition(credentials1);
+
+// render index page
+app.get('/', function(req, res) {
+  res.render('index');
+});
+
+app.post('/visual', function (req, res) {
+    // Classifiers are 0 = all or a json = {label_groups:['<classifier-name>']}
+    var classifier = req.body.classifier || '0';  // All
+    if (classifier !== '0') {
+        classifier = JSON.stringify({ label_groups: [classifier] });
+    }
+
+    var imgFile;
+
+    if (req.files.image) {
+        // file image
+        imgFile = fs.createReadStream(req.files.image.path);
+    } else if (req.body.url && validator.isURL(req.body.url)) {
+        // web image
+        imgFile = request(req.body.url.split('?')[0]);
+    } else if (req.body.url && req.body.url.indexOf('images') === 0) {
+        // local image
+        imgFile = fs.createReadStream(path.join('public', req.body.url));
+    } else {
+        // malformed url
+        return res.status(500).json({ error: 'Malformed URL' });
+    }
+
+    var formData = {
+        labels_to_check: classifier,
+        image_file: imgFile
+    };
+
+    visualRecognition.recognize(formData, function (error, result) {
+        console.log(error);
+        console.log(result);
+
+        if (error)
+            return res.status(error.error ? error.error.code || 500 : 500).json({ error: error });
+        else
+            return res.json(result);
+    });
+}); 
+//*/
+/*Ended visual recognization */
 
 var port = process.env.VCAP_APP_PORT || 3000;
 server.listen(port);

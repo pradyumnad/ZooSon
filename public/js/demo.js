@@ -296,6 +296,7 @@ $(document).ready(function () {
      * Instagram API implementation
      */
 
+
     function fetchImages(animal) {
         var clientId = "6a62994b36e5427fa91890f03a403d5f";
         var accessToken = "4043872.1fb234f.d87ed5cbe9dc471b80fc8692c734e258";
