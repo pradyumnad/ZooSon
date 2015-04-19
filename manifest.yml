@@ -5,12 +5,12 @@ applications:
   memory: 256m
   services:
   - Speech To Text-rg
-  - Visual Recognition-rg
+  - Visual Recognition-bm
   declared-services:
     Speech To Text-rg:
       label: speech_to_text
       plan: free   
-    Visual Recognition-rg:
+    Visual Recognition-bm:
       label: visual_recognition
       plan: free
  
