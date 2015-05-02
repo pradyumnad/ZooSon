@@ -22,6 +22,8 @@ var prefixURL = "http://lookup.dbpedia.org/api/search.asmx/PrefixSearch";
  */
 var sparqlURL = "http://dbpedia.org/sparql";
 var fillKey = "__XXX__";
+
+var showPattern = /Show me [A-Za-z]*[\s]?/gi;
 var showQuery =
     "SELECT DISTINCT * WHERE {"+
         "?x0 rdf:type ?type ."+
@@ -40,6 +42,7 @@ var imageQuery =
         "?x0 foaf:depiction ?image."+
     "}";
 
+var aboutPattern = /What is [A-Za-z]*[\s]?\?/gi;
 var aboutQuery =
     "SELECT DISTINCT * WHERE {"+
         "?x0 rdf:type ?type."+
@@ -54,6 +57,15 @@ var listQuery =
     "WHERE {"+
         "?x0 dbpedia-owl:species ?class ."+
         "FILTER(regex(?class, \"^__XXX__\", \"i\")) ."+
+    "}";
+
+var propPattern = /What is [A-Za-z]* of [A-Za-z\s]*[\s]?\?/gi;
+var propQuery =
+    "SELECT *"+
+    "WHERE {"+
+        "?x0 dbpprop:name \"__XXX__\"@en ."+
+        "?x0 rdf:type dbpedia-owl:Species ."+
+        "?x0 dbpprop:lifeSpan ?lifespan"+
     "}";
 
 function DBPedia() {
@@ -83,6 +95,9 @@ DBPedia.executeSPARQL = function(type, subject, success, fail) {
         query = query.replace(fillKey, subject);
     } else if (type == TEMPLATES.about) {
         query = aboutQuery;
+        query = query.replace(fillKey, subject);
+    } else if (type == TEMPLATES.prop) {
+        query = propQuery;
         query = query.replace(fillKey, subject);
     }
 
@@ -116,6 +131,19 @@ DBPedia.fetchProperty = function(type, result) {
         if(bindings.length > 0) {
             var object = bindings[0];
             return object.comment.value;
+        } else {
+            alert("No results from the DB");
+        }
+    } else if(type == TEMPLATES.prop) {
+        if(bindings.length > 0) {
+            var object = bindings[0];
+
+            var lifespanString = object.lifespan.value;
+            var res = lifespanString.split("E");
+            var lifespan = parseFloat(res[0])*Math.pow(10, parseInt(res[1]))/(60*60*24*30*12);
+            lifespan = Math.round(lifespan*100.0)/100.0
+
+            return lifespan+" Years";
         } else {
             alert("No results from the DB");
         }
@@ -162,23 +190,12 @@ NLPService.getChunks = function(string, success, fail) {
     );
 };
 
-/**
-
- 1. Show me Snake
-
- SELECT DISTINCT * WHERE {
-    ?x0 rdf:type ?type.
-    FILTER(regex(?type, "Animal", "i")) .
-    ?x0 rdfs:label "Snake"@en.
- ?x0 foaf:depiction ?image.
- }
-
- **/
 
 var TEMPLATES = {
     image: "What does a XXX look like ?",
     about: "What is X ?",
-    breed: "What is lifespan of X"
+    prop: "What is lifespan of X ?",
+    creator: "Who is creator of X ?"
 };
 
 function ZooSonQueTemplate () {
@@ -186,5 +203,13 @@ function ZooSonQueTemplate () {
 }
 
 ZooSonQueTemplate.detect = function(question) {
+    if(showPattern.test(question)) {
+        return TEMPLATES.image;
+    } else if(aboutPattern.test(question)) {
+        return TEMPLATES.about;
+    } else if(propPattern.test(question)) {
+        return TEMPLATES.prop;
+    }
 
+    return "";
 };

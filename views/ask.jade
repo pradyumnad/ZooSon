@@ -21,22 +21,14 @@ head
             .container
                 // Brand and toggle get grouped for better mobile display
                 .navbar-header
-                    button.navbar-toggle(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1')
-                        span.sr-only Toggle navigation
-
-                        span.icon-bar
-
-                        span.icon-bar
-
-                        span.icon-bar
-
-                    h1 ZooSon Q&A
+                    img(src='/images/animals_logo.png', height="30", width="30", class="left")
+                    h2(class='left') ZooSon
             // /.container
         // Page Content
         .container
             // Jumbotron Header
             header.jumbotron.hero-spacer
-                h1 Ask us
+                h2 Ask us
                 p
                     Do you want to know about an animal ? breeds ? Any fictional characters (stick to animals, coz we love them.)
 
@@ -55,20 +47,19 @@ head
 
             hr
             // List of Questions
-            div#debug.row
+            div#questions.row
                 .col-lg-12
-                    h3 You may want to try these questions..
+                    h3 You may want to try these questions.. (try different animals)
                     .list-group
                         a.list-group-item(href='#') show me Snake.
-                        a.list-group-item(href='#') What is Chow Chow ?
+                        a.list-group-item(href='#') What is Zebra ?
                         a.list-group-item(href='#') What is lifespan of Labrador Retriever ?
-                        a.list-group-item(href='#') What are Mouse fictional characters ?
 
             // /.row
 
             hr
             // Debug
-            div#debug.row
+            div#debug.row(style='visibility: hidden;')
                 .col-lg-12
                     h3 Debug
                     textarea#debug-ta.form-control(rows="10")
@@ -76,12 +67,12 @@ head
 
             hr
             // Title
-            .row
+            .row(style='visibility: hidden;')
                 .col-lg-12
                     h3 Latest Features
             // /.row
             // Page Features
-            .row.text-center
+            .row.text-center(style='visibility: hidden;')
                 .col-md-3.col-sm-6.hero-feature
                     .thumbnail
                         img(src='http://placehold.it/800x500', alt='')
@@ -143,7 +134,7 @@ head
             footer
                 .row
                     .col-lg-12
-                        p Copyright &copy; Your Website 2014
+                        p Copyright &copy; ZooSon 2015
         // /.container
         // jQuery
         script(src='js/jquery-2.1.3.min.js')

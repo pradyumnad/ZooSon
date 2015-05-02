@@ -36,8 +36,10 @@ $(document).ready(function () {
                 var parts = result.tokens;
                 var chunks = result.chunks;
 
+                var subjects = [];
                 for (var i = 0; i < data.length; i++) {
-                    if (data[i] == "NN" || data[i] == "NNS" || data[i] == "NNP") {
+                    if (data[i] == "NNS" || data[i] == "NNP") {
+                        subjects[i] = parts[i];
                         index = i;
                         break;
                     }
@@ -47,12 +49,12 @@ $(document).ready(function () {
                     alert("No animal found in your sentence");
                 } else {
                     var type = TEMPLATES.image;
-                    if(startsWith(que, "What is ")) {
-                        type = TEMPLATES.about;
-                    }
+                    type = ZooSonQueTemplate.detect(que);
+                    console.log(type);
 
                     var subject = parts[index];
                     subject = chunks[index];
+
                     DBPedia.executeSPARQL(type, subject, function(response) {
                         console.log(response);
 
@@ -60,12 +62,17 @@ $(document).ready(function () {
                             var url = DBPedia.fetchProperty(type, response);
                             console.log(url);
 
-                            $('#resultsDiv').prepend('<img class="img-thumbnail" id="theImg" src="'+url+'" />');
+                            $('#resultsDiv').prepend('<img class="img img-responsive center-block" style="height: 100%" id="theImg" src="'+url+'" />');
                         } else if(type == TEMPLATES.about) {
                             var about = DBPedia.fetchProperty(type, response);
                             console.log(about);
 
                             $('#resultsDiv').prepend('<h4 id="theAbout">'+about+'</h4>')
+                        } else if(type == TEMPLATES.prop) {
+                            var details = DBPedia.fetchProperty(type, response);
+                            console.log(details);
+
+                            $('#resultsDiv').prepend('<h2 id="theAbout">'+details+'</h2>')
                         }
 
                     }, function(response) {
