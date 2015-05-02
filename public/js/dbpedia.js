@@ -30,11 +30,30 @@ var showQuery =
         "?x0 foaf:depiction ?image."+
         "}";
 
+var imageQuery =
+    "SELECT DISTINCT *"+
+    "WHERE {"+
+        "?x0 rdf:type <http://dbpedia.org/ontology/Species> ."+
+        "?x0 rdfs:label ?name ."+
+        "FILTER(regex(?name, \"^__XXX__\", \"i\")) ."+
+        "FILTER(langMatches(lang(?name), 'EN')) ."+
+        "?x0 foaf:depiction ?image."+
+    "}";
+
+var aboutQuery =
+    "SELECT DISTINCT * WHERE {"+
+        "?x0 rdf:type ?type."+
+        "FILTER(regex(?type, \"Species\", \"i\")) ."+
+        "?x0 rdfs:label \"__XXX__\"@en."+
+        "?x0 rdfs:comment ?comment."+
+        "FILTER(langMatches(lang(?comment), \"EN\")) ."+
+    "}";
+
 var listQuery =
     "SELECT *"+
     "WHERE {"+
         "?x0 dbpedia-owl:species ?class ."+
-        "FILTER(regex(?class, \"__XXX__\", \"i\")) ."+
+        "FILTER(regex(?class, \"^__XXX__\", \"i\")) ."+
     "}";
 
 function DBPedia() {
@@ -58,8 +77,12 @@ DBPedia.prefixSearch = function(prefix) {
 DBPedia.executeSPARQL = function(type, subject, success, fail) {
 
     var query = "SELECT DISTINCT ?type WHERE { ?x0 rdf:type ?type } LIMIT 5";
+
     if(type == TEMPLATES.image) {
         query = showQuery;
+        query = query.replace(fillKey, subject);
+    } else if (type == TEMPLATES.about) {
+        query = aboutQuery;
         query = query.replace(fillKey, subject);
     }
 
@@ -89,6 +112,13 @@ DBPedia.fetchProperty = function(type, result) {
         } else {
             alert("No results from the DB");
         }
+    } else if(type == TEMPLATES.about) {
+        if(bindings.length > 0) {
+            var object = bindings[0];
+            return object.comment.value;
+        } else {
+            alert("No results from the DB");
+        }
     }
 };
 
@@ -98,6 +128,24 @@ function NLPService() {
 
 NLPService.getPOS = function(string, success, fail) {
     var base_url = "https://nlpservices.mybluemix.net/api/service/pos/";
+    var url = base_url + encodeURIComponent(string);
+    console.log(url);
+
+    $.get(url,
+        function (result) {
+//            console.log(result);
+            success(result);
+        }
+    ).fail(
+        function (data) {
+//            console.log(data);
+            fail(data);
+        }
+    );
+};
+
+NLPService.getChunks = function(string, success, fail) {
+    var base_url = "https://nlpservices.mybluemix.net/api/service/chunks/";
     var url = base_url + encodeURIComponent(string);
     console.log(url);
 
@@ -129,7 +177,7 @@ NLPService.getPOS = function(string, success, fail) {
 
 var TEMPLATES = {
     image: "What does a XXX look like ?",
-    about: "What is a X ?",
+    about: "What is X ?",
     breed: "What is lifespan of X"
 };
 

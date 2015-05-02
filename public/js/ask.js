@@ -2,6 +2,14 @@
  * Created by pradyumnad on 01/05/15.
  */
 
+function startsWith(str, prefix) {
+    return str.lastIndexOf(prefix, 0) === 0;
+}
+
+function endsWith(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}
+
 $(document).ready(function () {
 
     $("#loadingDiv").hide();
@@ -18,14 +26,15 @@ $(document).ready(function () {
         var que = $("#question").val();
         console.log(que);
 
-        NLPService.getPOS(que,
+        NLPService.getChunks(que,
             function (result) {
                 $("#debug-ta").val(JSON.stringify(result));
 
                 console.log(result);
                 var index = -999;
-                var data = result.results;
+                var data = result.tags;
                 var parts = result.tokens;
+                var chunks = result.chunks;
 
                 for (var i = 0; i < data.length; i++) {
                     if (data[i] == "NN" || data[i] == "NNS" || data[i] == "NNP") {
@@ -37,14 +46,27 @@ $(document).ready(function () {
                 if (index < 0) {
                     alert("No animal found in your sentence");
                 } else {
+                    var type = TEMPLATES.image;
+                    if(startsWith(que, "What is ")) {
+                        type = TEMPLATES.about;
+                    }
+
                     var subject = parts[index];
-                    DBPedia.executeSPARQL(TEMPLATES.image, subject, function(response) {
+                    subject = chunks[index];
+                    DBPedia.executeSPARQL(type, subject, function(response) {
                         console.log(response);
 
-                        var url = DBPedia.fetchProperty(TEMPLATES.image, response);
-                        console.log(url);
+                        if(type == TEMPLATES.image) {
+                            var url = DBPedia.fetchProperty(type, response);
+                            console.log(url);
 
-                        $('#resultsDiv').prepend('<img class="img-thumbnail" id="theImg" src="'+url+'" />')
+                            $('#resultsDiv').prepend('<img class="img-thumbnail" id="theImg" src="'+url+'" />');
+                        } else if(type == TEMPLATES.about) {
+                            var about = DBPedia.fetchProperty(type, response);
+                            console.log(about);
+
+                            $('#resultsDiv').prepend('<h4 id="theAbout">'+about+'</h4>')
+                        }
 
                     }, function(response) {
                         console.log(response);
