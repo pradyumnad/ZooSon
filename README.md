@@ -6,6 +6,86 @@ Give it a try! Click the button below to fork into IBM DevOps Services and deplo
 
 [![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/watson-developer-cloud/speech-to-text-nodejs.git)
 
+## SPARQL for querying data
+
+List of questions/tasks for the application.
+Console `http://dbpedia.org/sparql`
+
+1. Show me Snake
+
+        SELECT DISTINCT * WHERE {
+            ?x0 rdf:type ?type.
+            FILTER(regex(?type, "Animal", "i")) .
+            ?x0 rdfs:label "Snake"@en.
+            ?x0 foaf:depiction ?image.
+        }
+
+2. What is Dog ?
+
+        SELECT DISTINCT * WHERE {
+            ?x0 rdf:type ?type.
+            FILTER(regex(?type, "Animal", "i")) .
+            ?x0 rdfs:label "Snake"@en.
+            ?x0 rdfs:comment ?comment.
+            FILTER(langMatches(lang(?comment), "EN")) .
+        }
+
+3. What is Wikipedia link for Dog ?
+
+        SELECT DISTINCT * WHERE {
+            ?x0 rdf:type ?type.
+            FILTER(regex(?type, "Animal", "i")) .
+            ?x0 rdfs:label "Penguin"@en .
+            ?x0 prov:wasDerivedFrom ?x1.
+        }
+
+4. What is lifespan of "Labrador Retriever" ?
+
+        SELECT *
+        WHERE {
+            ?x0 dbpprop:name "Labrador Retriever"@en .
+            ?x0 rdf:type dbpedia-owl:Species .
+            ?x0 dbpprop:lifeSpan ?lifespan
+        }
+
+        SELECT *
+        WHERE {
+         <http://dbpedia.org/resource/Golden_Retriever> dbpprop:lifeSpan ?object
+        }
+
+        SELECT *
+        WHERE {
+         ?x0 dbpprop:name "Labrador Retriever"@en .
+         ?x0 rdf:type dbpedia-owl:Species .
+         ?x0 dbpprop:lifeSpan ?lifespan .
+         ?x0 dcterms:subject ?subjects .
+        }
+
+5. Who is creator of Jerry Mouse ?
+
+6. List all mouse characters.
+
+        SELECT *
+        WHERE {
+            ?x0 dbpedia-owl:species ?class .
+            FILTER(regex(?class, "mouse", "i")) .
+        }
+
+-- Select Countries and population
+
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX type: <http://dbpedia.org/class/yago/>
+        PREFIX prop: <http://dbpedia.org/property/>
+
+        SELECT ?country_name ?population
+        WHERE {
+            ?country a type:LandlockedCountries ;
+                     rdfs:label ?country_name ;
+                     prop:populationEstimate ?population .
+            FILTER (?population > 150000) .
+            FILTER(langMatches(lang(?country_name), "EN")).
+        }
+
 ## Getting Started
 
 1. Create a Bluemix Account

@@ -101,6 +101,11 @@ app.post('/', function (req, res) {
             return res.json(result);
     });
 });
+
+app.get('/ask', function(req, res) {
+    res.render('ask');
+});
+
 //*/
 /*Ended visual recognization */
 

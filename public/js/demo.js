@@ -38,6 +38,9 @@ $(document).ready(function () {
         $('.unsupported-overlay').show();
     }
 
+    //Checking DBPedia
+    fetchEntities("Dog");
+
     //Training
     var shouldTrainCheckBox = $("#should-train");
     shouldTrain = shouldTrainCheckBox.prop('checked');
@@ -266,7 +269,7 @@ $(document).ready(function () {
 
         var service_url = "https://nlpservices.mybluemix.net/api/service/pos/";
 
-        var url = service_url+encodeURIComponent(sentence);
+        var url = service_url + encodeURIComponent(sentence);
         console.log(url);
 
         $.get(url,
@@ -323,4 +326,7 @@ $(document).ready(function () {
         });
     }
 
+    function fetchEntities(text) {
+//        DBPedia.prefixSearch(text);
+    }
 });
