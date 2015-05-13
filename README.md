@@ -2,6 +2,11 @@
 Give it a try! 
 Its all about animals.
 
+## NLP Services
+
+[Github] https://github.com/pradyumnad/CS560-T7
+[Bluemix] http://nlpservices.mybluemix.net/
+
 ## SPARQL for querying data
 
 List of questions/tasks for the application.
